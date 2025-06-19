@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sin Conexión - INNOVATECH</title>
+    
+    <style>
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #3f51b5;
+            --accent-color: #00bcd4;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --medium-gray: #6c757d;
+            --dark-gray: #343a40;
+            --spacing-sm: 1rem;
+            --spacing-md: 2rem;
+            --spacing-lg: 3rem;
+            --border-radius: 8px;
+            --border-radius-lg: 16px;
+            --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md);
+            color: var(--white);
+        }
+        
+        .offline-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .offline-icon {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-md);
+            animation: pulse 2s infinite;
+        }
+        
+        .offline-icon svg {
+            width: 60px;
+            height: 60px;
+            fill: var(--white);
+        }
+        
+        .offline-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            color: var(--white);
+        }
+        
+        .offline-message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: var(--spacing-md);
+            opacity: 0.9;
+        }
+        
+        .offline-features {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            text-align: left;
+        }
+        
+        .offline-features h3 {
+            color: var(--accent-color);
+            margin-bottom: var(--spacing-sm);
+            text-align: center;
+        }
+        
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .feature-item svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--accent-color);
+            flex-shrink: 0;
+        }
+        
+        .retry-section {
+            margin-top: var(--spacing-md);
+        }
+        
+        .retry-btn {
+            background: var(--accent-color);
+            color: var(--white);
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .retry-btn:hover {
+            background: var(--white);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .retry-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+        
+        .connection-status {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: var(--spacing-sm);
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: #dc3545;
+            animation: blink 1.5s infinite;
+        }
+        
+        .status-indicator.online {
+            background: #28a745;
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+        
+        @media (max-width: 480px) {
+            .offline-container {
+                padding: var(--spacing-md);
+            }
+            
+            .offline-title {
+                font-size: 1.5rem;
+            }
+            
+            .offline-icon {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .offline-icon svg {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">
+            <!-- WiFi Off Icon -->
+            <svg viewBox="0 0 24 24">
+                <path d="M12,2C13.84,2 15.59,2.45 17.14,3.27L15.73,4.68C14.59,4.25 13.32,4 12,4C8.64,4 5.68,5.58 3.64,8.08L2.22,6.66C4.87,3.74 8.29,2 12,2M21.78,6.66L20.36,8.08C19.8,7.41 19.17,6.81 18.46,6.29L19.87,4.88C20.8,5.57 21.64,6.38 22.39,7.29L21.78,6.66M18.18,10.5L16.76,11.91C16.06,11.34 15.27,10.91 14.41,10.63L15.82,9.22C16.84,9.61 17.78,10.17 18.63,10.86L18.18,10.5M12,10C10.32,10 8.77,10.65 7.55,11.7L6.13,10.28C7.73,8.85 9.78,8 12,8C13.22,8 14.37,8.27 15.41,8.75L14,10.16C13.36,10.06 12.69,10 12,10M20.84,12.25L19.42,13.66C18.84,13.16 18.2,12.75 17.5,12.45L18.91,11.04C19.5,11.39 20.05,11.8 20.56,12.25H20.84M12,14C11.04,14 10.14,14.33 9.41,14.86L8,13.45C9.07,12.5 10.47,12 12,12C12.85,12 13.66,12.18 14.39,12.5L13,13.91C12.68,14 12.35,14 12,14M2.27,2.27L20.73,20.73L19.32,22.14L14.5,17.32C13.77,16.76 12.91,16.44 12,16.44C10.31,16.44 8.77,17.09 7.55,18.14L6.13,16.72C7.33,15.65 8.85,14.94 10.54,14.73L1.86,6.05L2.27,2.27Z"/>
+            </svg>
+        </div>
+        
+        <h1 class="offline-title">Sin Conexión a Internet</h1>
+        
+        <p class="offline-message">
+            No hay conexión a internet disponible. Pero no te preocupes, algunas funciones 
+            de INNOVATECH siguen disponibles mientras estás offline.
+        </p>
+        
+        <div class="offline-features">
+            <h3>Disponible sin conexión:</h3>
+            <ul class="feature-list">
+                <li class="feature-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"/>
+                    </svg>
+                    <span>Información de la empresa</span>
+                </li>
+                <li class="feature-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"/>
+                    </svg>
+                    <span>Catálogo de productos y servicios</span>
+                </li>
+                <li class="feature-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"/>
+                    </svg>
+                    <span>Documentación y FAQ</span>
+                </li>
+                <li class="feature-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"/>
+                    </svg>
+                    <span>Información de contacto</span>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="retry-section">
+            <button class="retry-btn" onclick="checkConnection()">
+                <svg viewBox="0 0 24 24">
+                    <path d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z"/>
+                </svg>
+                Reintentar Conexión
+            </button>
+            
+            <div class="connection-status">
+                <span class="status-indicator" id="statusIndicator"></span>
+                <span id="statusText">Sin conexión</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Verificar estado de conexión
+        function updateConnectionStatus() {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('statusText');
+            
+            if (navigator.onLine) {
+                indicator.classList.add('online');
+                text.textContent = 'Conexión restaurada';
+                
+                // Redirigir a la página principal después de 2 segundos
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            } else {
+                indicator.classList.remove('online');
+                text.textContent = 'Sin conexión';
+            }
+        }
+        
+        // Verificar conexión manualmente
+        function checkConnection() {
+            updateConnectionStatus();
+            
+            if (navigator.onLine) {
+                // Intentar cargar un recurso pequeño para verificar conectividad real
+                fetch('/manifest.json', { 
+                    method: 'HEAD',
+                    cache: 'no-cache'
+                })
+                .then(() => {
+                    window.location.href = '/';
+                })
+                .catch(() => {
+                    // Aún sin conexión real
+                    document.getElementById('statusText').textContent = 'Conexión inestable';
+                });
+            }
+        }
+        
+        // Escuchar eventos de conexión
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+        
+        // Verificar estado inicial
+        updateConnectionStatus();
+        
+        // Verificar conexión automáticamente cada 30 segundos
+        setInterval(updateConnectionStatus, 30000);
+        
+        // Navegación offline limitada
+        function goHome() {
+            window.history.back();
+        }
+        
+        // Mostrar mensaje informativo después de 10 segundos
+        setTimeout(() => {
+            console.log('INNOVATECH PWA - Modo Offline');
+        }, 10000);
+    </script>
+</body>
+</html>

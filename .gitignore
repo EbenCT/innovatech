@@ -1,0 +1,250 @@
+# INNOVATECH - .gitignore
+
+# ===== SISTEMA OPERATIVO =====
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ===== EDITORES E IDEs =====
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+
+# Atom
+.atom/
+
+# JetBrains IDEs
+.idea/
+*.swp
+*.swo
+*~
+
+# Vim
+*.swp
+*.swo
+*.un~
+Session.vim
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ===== NODE.JS (SI SE USA) =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.eslintcache
+.node_repl_history
+*.tgz
+.yarn-integrity
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ===== ARCHIVOS DE BUILD =====
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+
+# ===== LOGS =====
+logs/
+*.log
+loglevel=silent
+
+# ===== ARCHIVOS TEMPORALES =====
+tmp/
+temp/
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*.backup
+*~
+
+# ===== ARCHIVOS DE CONFIGURACIÓN SENSIBLES =====
+# Variables de entorno
+.env
+.env.local
+.env.development
+.env.production
+config.local.js
+
+# Claves API y secretos
+secrets.json
+api-keys.json
+.secrets/
+
+# Archivos de configuración local
+config.local.*
+local.config.*
+
+# ===== ARCHIVOS DE DESARROLLO =====
+# Mapas de código fuente
+*.map
+
+# Archivos de coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# ===== ARCHIVOS DE DISEÑO =====
+# Archivos de Photoshop
+*.psd
+*.psb
+
+# Archivos de Sketch
+*.sketch
+
+# Archivos de Figma (si se sincronizan localmente)
+*.fig
+
+# ===== ARCHIVOS GRANDES/BINARIOS =====
+# Videos de alta resolución (usar versiones optimizadas)
+*.mov
+*.mp4
+*.avi
+*.mkv
+
+# Archivos de imagen sin optimizar
+# (mantener solo versiones optimizadas para web)
+*-original.*
+*-source.*
+*-raw.*
+
+# Archivos de audio grandes
+*.wav
+*.flac
+*.aif
+
+# ===== ARCHIVOS DE ANALYTICS Y TRACKING =====
+# Google Analytics
+google-analytics.json
+
+# Archivos de estadísticas locales
+stats.json
+analytics-data/
+
+# ===== ARCHIVOS DE DEPLOY =====
+# Archivos de configuración de deploy específicos
+deploy.config.js
+.deploy/
+
+# Archivos de certificados SSL (usar variables de entorno)
+*.key
+*.crt
+*.pem
+*.p12
+
+# ===== CARPETAS DE UPLOADS =====
+# Uploads de usuarios (si los hay)
+uploads/
+user-uploads/
+
+# Archivos temporales de formularios
+form-uploads/
+
+# ===== DOCUMENTACIÓN PRIVADA =====
+# Documentos internos que no deben ser públicos
+docs/internal/
+private-docs/
+*.confidential.*
+
+# ===== ARCHIVOS DE BACKUP =====
+backup/
+backups/
+*.backup
+*.bak
+
+# ===== ARCHIVOS DE HERRAMIENTAS DE DESARROLLO =====
+# ESLint
+.eslintcache
+
+# Prettier
+.prettier-cache
+
+# Stylelint
+.stylelintcache
+
+# ===== ARCHIVOS ESPECÍFICOS DEL PROYECTO =====
+# Archivos de configuración local del proyecto
+local-config.json
+dev.config.json
+
+# Archivos de testing local
+test-results/
+screenshots/
+test-data/
+
+# Archivos de desarrollo temporal
+playground/
+sandbox/
+experiments/
+
+# ===== COMENTARIOS PARA EL EQUIPO =====
+# NOTA: Este .gitignore está configurado para un sitio web estático
+# Si añades Node.js, PHP u otras tecnologías, actualiza según sea necesario
+
+# IMPORTANTE: 
+# - Siempre revisar antes de hacer commit
+# - No ignorar archivos necesarios para el funcionamiento
+# - Documentar cambios importantes en este archivo
+
+# ===== ARCHIVOS QUE SÍ DEBEN INCLUIRSE =====
+# (Esta sección es informativa - Git incluye automáticamente lo no ignorado)
+# ✅ Todos los archivos .html
+# ✅ Todos los archivos .css y .js
+# ✅ Imágenes optimizadas para web
+# ✅ Iconos del PWA
+# ✅ Archivos de configuración (manifest.json, sw.js)
+# ✅ Documentación pública (README.md)
+# ✅ Archivos de ejemplo y demos
