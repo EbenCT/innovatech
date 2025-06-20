@@ -1,97 +1,50 @@
-// ===== CHATBOT CONFIGURATION =====
-const CHATBOT_CONFIG = {
-    name: 'Sofia',
-    company: 'INNOVATECH',
-    responseDelay: 1000,
-    typingDelay: 2000,
-    maxMessages: 50
+// ===== CONFIGURACIÓN GEMINI AI =====
+const GEMINI_CONFIG = {
+    apiKey: 'AIzaSyDtVbJLqjH_HiNXnW3v_l7YbtFoC7exxts', // Reemplaza con tu clave API
+    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+    maxTokens: 1000,
+    temperature: 0.7
 };
 
-// ===== PREDEFINED RESPONSES =====
-const CHATBOT_RESPONSES = {
-    // Saludos
-    greetings: [
-        '¡Hola! Soy Sofia, tu asistente virtual de INNOVATECH. ¿En qué puedo ayudarte hoy?',
-        '¡Buen día! Soy Sofia y estoy aquí para ayudarte con cualquier consulta sobre nuestros servicios.',
-        '¡Hola! ¿Cómo puedo asistirte hoy? Estoy aquí para resolver tus dudas sobre INNOVATECH.'
-    ],
-    
-    // Despedidas
-    farewells: [
-        '¡Ha sido un placer ayudarte! No dudes en contactarnos si necesitas algo más.',
-        '¡Hasta pronto! Esperamos poder trabajar contigo en tu próximo proyecto.',
-        'Gracias por contactarnos. ¡Que tengas un excelente día!'
-    ],
-    
-    // Servicios
-    services: {
-        web: 'Desarrollamos aplicaciones web modernas usando React, Vue.js, Node.js y tecnologías en la nube. Nuestras soluciones son escalables, seguras y optimizadas para rendimiento.',
-        mobile: 'Creamos aplicaciones móviles nativas e híbridas para iOS y Android usando React Native y Flutter. Incluimos diseño UX/UI y integración con APIs.',
-        erp: 'Nuestros sistemas ERP personalizados ayudan a gestionar todos los recursos empresariales: finanzas, inventarios, recursos humanos y reportes avanzados.',
-        consultoria: 'Ofrecemos consultoría tecnológica para analizar tus necesidades y recomendar las mejores soluciones para optimizar tus procesos de negocio.'
-    },
-    
-    // Información de la empresa
-    company: {
-        about: 'INNOVATECH es una empresa de desarrollo de software fundada en 2020. Nos especializamos en crear soluciones tecnológicas innovadoras para empresas de todos los tamaños.',
-        team: 'Contamos con un equipo de desarrolladores senior especializados en tecnologías modernas como React, Node.js, Python, Flutter y cloud computing.',
-        experience: 'Hemos completado más de 50 proyectos exitosos para 25+ clientes satisfechos en nuestros 5 años de experiencia.',
-        location: 'Estamos ubicados en Cotoca, Santa Cruz, Bolivia. Trabajamos tanto local como remotamente con clientes internacionales.'
-    },
-    
-    // Precios y presupuestos
-    pricing: 'Los costos varían según la complejidad del proyecto. Ofrecemos presupuestos gratuitos y personalizados. ¿Te gustaría que un especialista se contacte contigo para evaluar tu proyecto?',
-    
-    // Contacto
-    contact: 'Puedes contactarnos por:\n📧 Email: contacto@InnovaTech.com\n📱 Teléfono: +591 7000-0000\n📍 Dirección: Av. Principal 123, Cotoca, Santa Cruz\n\n¿Prefieres que te llame un especialista?',
-    
-    // Tiempo de desarrollo
-    timeline: 'Los tiempos varían según el proyecto:\n• Páginas web: 2-4 semanas\n• Apps móviles: 6-12 semanas\n• Sistemas ERP: 3-8 meses\n\nPodemos darte un cronograma específico después de evaluar tus requerimientos.',
-    
-    // Tecnologías
-    technologies: 'Trabajamos con tecnologías modernas:\n• Frontend: React, Vue.js, Angular\n• Backend: Node.js, Python, Java\n• Móvil: React Native, Flutter\n• Base de datos: PostgreSQL, MongoDB\n• Cloud: AWS, Azure, Google Cloud',
-    
-    // Soporte
-    support: 'Ofrecemos diferentes niveles de soporte:\n• Soporte básico: Lun-Vie 9-18h\n• Soporte premium: 24/7\n• Mantenimiento preventivo\n• Actualizaciones y mejoras\n\n¿Qué tipo de soporte necesitas?',
-    
-    // Default response
-    default: [
-        'Interesante pregunta. Te conectaré con un especialista para darte una respuesta más detallada. ¿Cuál es tu email?',
-        'No tengo información específica sobre eso, pero puedo conectarte con nuestro equipo técnico. ¿Te parece bien?',
-        'Esa es una consulta muy específica. ¿Te gustaría que un experto se comunique contigo para darte todos los detalles?'
-    ]
-};
+// ===== CONTEXTO DE LA EMPRESA =====
+const COMPANY_CONTEXT = `
+Eres Sofia, asistente virtual de INNOVATECH, una empresa de desarrollo de software ubicada en Cotoca, Santa Cruz, Bolivia.
 
-// ===== KEYWORDS MAPPING =====
-const KEYWORDS = {
-    greetings: ['hola', 'buenos dias', 'buenas tardes', 'buenas noches', 'saludos', 'hey', 'ola'],
-    farewells: ['adios', 'chau', 'hasta luego', 'nos vemos', 'gracias', 'bye'],
-    services: {
-        web: ['web', 'pagina', 'website', 'sitio', 'aplicacion web', 'plataforma'],
-        mobile: ['movil', 'app', 'aplicacion', 'android', 'ios', 'telefono'],
-        erp: ['erp', 'sistema', 'gestion', 'empresarial', 'inventario', 'finanzas'],
-        consultoria: ['consultoria', 'asesoramiento', 'analisis', 'recomendacion']
-    },
-    company: {
-        about: ['empresa', 'acerca', 'quienes son', 'historia', 'fundacion'],
-        team: ['equipo', 'desarrolladores', 'programadores', 'staff'],
-        experience: ['experiencia', 'proyectos', 'clientes', 'tiempo'],
-        location: ['ubicacion', 'direccion', 'donde', 'oficina']
-    },
-    pricing: ['precio', 'costo', 'cuanto', 'tarifa', 'presupuesto', 'cotizacion'],
-    contact: ['contacto', 'telefono', 'email', 'direccion', 'comunicarse'],
-    timeline: ['tiempo', 'duracion', 'cronograma', 'cuando', 'demora'],
-    technologies: ['tecnologia', 'lenguaje', 'framework', 'herramientas'],
-    support: ['soporte', 'ayuda', 'mantenimiento', 'asistencia']
-};
+INFORMACIÓN DE LA EMPRESA:
+- Nombre: INNOVATECH
+- Fundada: 2020
+- Ubicación: Av. Principal 123, Cotoca, Santa Cruz, Bolivia
+- Email: contacto@InnovaTech.com
+- Teléfono: +591 7000-0000
 
-// ===== CHATBOT CLASS =====
-class InnovaTechChatbot {
+SERVICIOS:
+1. Desarrollo Web (React, Vue.js, Node.js) - 2-4 semanas
+2. Aplicaciones Móviles (React Native, Flutter) - 6-12 semanas  
+3. Sistemas ERP personalizados - 3-8 meses
+4. Consultoría tecnológica
+
+TECNOLOGÍAS:
+- Frontend: React, Vue.js, Angular
+- Backend: Node.js, Python, Java
+- Móvil: React Native, Flutter
+- Bases de datos: PostgreSQL, MongoDB
+- Cloud: AWS, Azure, Google Cloud
+
+INSTRUCCIONES:
+- Responde de manera profesional pero amigable
+- Mantén las respuestas concisas (máximo 3-4 líneas)
+- Si no tienes información específica, ofrece conectar con un especialista
+- Siempre menciona que puedes proporcionar presupuestos gratuitos
+- Usa emojis moderadamente para hacer la conversación más amigable
+`;
+
+// ===== CLASE CHATBOT MEJORADA =====
+class GeminiChatbot {
     constructor() {
         this.isOpen = false;
         this.messages = [];
         this.isTyping = false;
-        this.userAwaitingResponse = false;
+        this.conversationHistory = [];
         
         this.initializeElements();
         this.setupEventListeners();
@@ -109,7 +62,7 @@ class InnovaTechChatbot {
     
     setupEventListeners() {
         this.chatbotButton.addEventListener('click', () => this.toggleChat());
-        this.chatbotClose.addEventListener('click', () => this.closeChat());
+        this.chatbotClose.addEventListener('click', () => this.toggleChat());
         this.chatbotSend.addEventListener('click', () => this.sendMessage());
         
         this.chatbotInput.addEventListener('keypress', (e) => {
@@ -118,277 +71,216 @@ class InnovaTechChatbot {
             }
         });
         
-        this.chatbotInput.addEventListener('input', () => this.handleTyping());
+        // Auto-resize del input
+        this.chatbotInput.addEventListener('input', () => {
+            this.chatbotInput.style.height = 'auto';
+            this.chatbotInput.style.height = this.chatbotInput.scrollHeight + 'px';
+        });
     }
     
     toggleChat() {
         this.isOpen = !this.isOpen;
-        this.chatbotWindow.classList.toggle('active', this.isOpen);
+        this.chatbotWindow.style.display = this.isOpen ? 'flex' : 'none';
         
         if (this.isOpen) {
             this.chatbotInput.focus();
-            this.trackEvent('chatbot_opened');
-        } else {
-            this.trackEvent('chatbot_closed');
+            this.scrollToBottom();
         }
-    }
-    
-    closeChat() {
-        this.isOpen = false;
-        this.chatbotWindow.classList.remove('active');
-        this.trackEvent('chatbot_closed');
     }
     
     addWelcomeMessage() {
-        const welcomeMessage = CHATBOT_RESPONSES.greetings[0];
+        const welcomeMessage = "¡Hola! 👋 Soy Sofia, tu asistente virtual de INNOVATECH. ¿En qué puedo ayudarte hoy?";
         this.addMessage(welcomeMessage, 'bot');
     }
     
-    sendMessage() {
+    async sendMessage() {
         const message = this.chatbotInput.value.trim();
         
-        if (!message || this.isTyping) return;
+        if (!message) return;
         
-        // Añadir mensaje del usuario
+        // Agregar mensaje del usuario
         this.addMessage(message, 'user');
         this.chatbotInput.value = '';
+        this.chatbotInput.style.height = 'auto';
         
-        // Procesar respuesta
-        this.processUserMessage(message);
-        
-        // Track event
-        this.trackEvent('message_sent', message);
-    }
-    
-    addMessage(text, sender, delay = 0) {
-        setTimeout(() => {
-            const messageElement = document.createElement('div');
-            messageElement.className = `message ${sender}-message`;
-            messageElement.textContent = text;
-            
-            this.chatbotMessages.appendChild(messageElement);
-            this.scrollToBottom();
-            
-            // Limitar número de mensajes
-            if (this.chatbotMessages.children.length > CHATBOT_CONFIG.maxMessages) {
-                this.chatbotMessages.removeChild(this.chatbotMessages.firstChild);
-            }
-            
-            this.messages.push({ text, sender, timestamp: new Date() });
-        }, delay);
-    }
-    
-    processUserMessage(message) {
+        // Mostrar indicador de escritura
         this.showTypingIndicator();
         
-        setTimeout(() => {
-            const response = this.generateResponse(message);
+        try {
+            // Obtener respuesta de Gemini
+            const response = await this.getGeminiResponse(message);
             this.hideTypingIndicator();
             this.addMessage(response, 'bot');
-        }, CHATBOT_CONFIG.responseDelay);
-    }
-    
-    generateResponse(message) {
-        const normalizedMessage = this.normalizeText(message);
-        
-        // Detectar intención
-        const intent = this.detectIntent(normalizedMessage);
-        
-        switch (intent.type) {
-            case 'greeting':
-                return this.getRandomResponse(CHATBOT_RESPONSES.greetings);
-                
-            case 'farewell':
-                return this.getRandomResponse(CHATBOT_RESPONSES.farewells);
-                
-            case 'service':
-                return CHATBOT_RESPONSES.services[intent.subtype];
-                
-            case 'company':
-                return CHATBOT_RESPONSES.company[intent.subtype];
-                
-            case 'pricing':
-                return CHATBOT_RESPONSES.pricing;
-                
-            case 'contact':
-                return CHATBOT_RESPONSES.contact;
-                
-            case 'timeline':
-                return CHATBOT_RESPONSES.timeline;
-                
-            case 'technologies':
-                return CHATBOT_RESPONSES.technologies;
-                
-            case 'support':
-                return CHATBOT_RESPONSES.support;
-                
-            default:
-                return this.getRandomResponse(CHATBOT_RESPONSES.default);
+        } catch (error) {
+            console.error('Error al obtener respuesta:', error);
+            this.hideTypingIndicator();
+            this.addMessage(this.getFallbackResponse(message), 'bot');
         }
     }
     
-    detectIntent(message) {
-        // Detectar saludos
-        if (this.containsKeywords(message, KEYWORDS.greetings)) {
-            return { type: 'greeting' };
-        }
+    async getGeminiResponse(userMessage) {
+        // Agregar mensaje al historial de conversación
+        this.conversationHistory.push({
+            role: 'user',
+            parts: [{ text: userMessage }]
+        });
         
-        // Detectar despedidas
-        if (this.containsKeywords(message, KEYWORDS.farewells)) {
-            return { type: 'farewell' };
-        }
+        // Preparar el prompt con contexto
+        const fullPrompt = `${COMPANY_CONTEXT}\n\nUsuario: ${userMessage}`;
         
-        // Detectar servicios
-        for (const [service, keywords] of Object.entries(KEYWORDS.services)) {
-            if (this.containsKeywords(message, keywords)) {
-                return { type: 'service', subtype: service };
+        const requestBody = {
+            contents: [
+                {
+                    parts: [
+                        {
+                            text: fullPrompt
+                        }
+                    ]
+                }
+            ],
+            generationConfig: {
+                temperature: GEMINI_CONFIG.temperature,
+                maxOutputTokens: GEMINI_CONFIG.maxTokens,
             }
+        };
+        
+        const response = await fetch(`${GEMINI_CONFIG.apiUrl}?key=${GEMINI_CONFIG.apiKey}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
         }
         
-        // Detectar información de empresa
-        for (const [info, keywords] of Object.entries(KEYWORDS.company)) {
-            if (this.containsKeywords(message, keywords)) {
-                return { type: 'company', subtype: info };
-            }
-        }
+        const data = await response.json();
         
-        // Detectar otras intenciones
-        if (this.containsKeywords(message, KEYWORDS.pricing)) {
-            return { type: 'pricing' };
+        if (data.candidates && data.candidates.length > 0) {
+            const botResponse = data.candidates[0].content.parts[0].text;
+            
+            // Agregar respuesta del bot al historial
+            this.conversationHistory.push({
+                role: 'model',
+                parts: [{ text: botResponse }]
+            });
+            
+            return botResponse;
+        } else {
+            throw new Error('No se recibió respuesta válida');
         }
-        
-        if (this.containsKeywords(message, KEYWORDS.contact)) {
-            return { type: 'contact' };
-        }
-        
-        if (this.containsKeywords(message, KEYWORDS.timeline)) {
-            return { type: 'timeline' };
-        }
-        
-        if (this.containsKeywords(message, KEYWORDS.technologies)) {
-            return { type: 'technologies' };
-        }
-        
-        if (this.containsKeywords(message, KEYWORDS.support)) {
-            return { type: 'support' };
-        }
-        
-        return { type: 'unknown' };
     }
     
-    containsKeywords(message, keywords) {
-        return keywords.some(keyword => message.includes(keyword));
+    getFallbackResponse(message) {
+        // Respuestas de respaldo si falla Gemini
+        const fallbackResponses = [
+            "Disculpa, estoy teniendo problemas técnicos. ¿Podrías repetir tu pregunta? 🔧",
+            "Lo siento, no pude procesar tu mensaje. Un especialista se contactará contigo pronto. 📞",
+            "Parece que hay un problema con mi conexión. ¿Te gustaría que te llame un experto? ☎️"
+        ];
+        
+        return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
     }
     
-    normalizeText(text) {
+    addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}-message`;
+        
+        if (sender === 'bot') {
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <p>${this.formatMessage(text)}</p>
+                    <span class="message-time">${this.getCurrentTime()}</span>
+                </div>
+            `;
+        } else {
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <p>${this.formatMessage(text)}</p>
+                    <span class="message-time">${this.getCurrentTime()}</span>
+                </div>
+                <div class="message-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            `;
+        }
+        
+        this.chatbotMessages.appendChild(messageDiv);
+        this.messages.push({ text, sender, timestamp: new Date() });
+        
+        this.scrollToBottom();
+        
+        // Limitar mensajes mostrados
+        if (this.messages.length > 50) {
+            this.chatbotMessages.removeChild(this.chatbotMessages.firstChild);
+            this.messages.shift();
+        }
+    }
+    
+    formatMessage(text) {
+        // Formatear el texto para mejor presentación
         return text
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '') // Remover acentos
-            .replace(/[^\w\s]/g, ' ') // Remover puntuación
-            .replace(/\s+/g, ' ') // Normalizar espacios
-            .trim();
-    }
-    
-    getRandomResponse(responses) {
-        if (Array.isArray(responses)) {
-            return responses[Math.floor(Math.random() * responses.length)];
-        }
-        return responses;
+            .replace(/\n/g, '<br>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>')
+            .replace(/([^\s@]+@[^\s@]+\.[^\s@]+)/g, '<a href="mailto:$1">$1</a>');
     }
     
     showTypingIndicator() {
         this.isTyping = true;
-        const typingElement = document.createElement('div');
-        typingElement.className = 'message bot-message typing-indicator';
-        typingElement.innerHTML = '<span></span><span></span><span></span>';
-        typingElement.id = 'typing-indicator';
-        
-        // Estilos para el indicador
-        const style = document.createElement('style');
-        style.textContent = `
-            .typing-indicator span {
-                display: inline-block;
-                width: 8px;
-                height: 8px;
-                border-radius: 50%;
-                background: #666;
-                margin: 0 1px;
-                animation: typing 1.4s infinite;
-            }
-            .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-            .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-            
-            @keyframes typing {
-                0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
-                30% { transform: translateY(-10px); opacity: 1; }
-            }
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message bot-message typing-indicator';
+        typingDiv.id = 'typing-indicator';
+        typingDiv.innerHTML = `
+            <div class="message-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div class="message-content">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
         `;
         
-        if (!document.querySelector('#typing-styles')) {
-            style.id = 'typing-styles';
-            document.head.appendChild(style);
-        }
-        
-        this.chatbotMessages.appendChild(typingElement);
+        this.chatbotMessages.appendChild(typingDiv);
         this.scrollToBottom();
     }
     
     hideTypingIndicator() {
         this.isTyping = false;
-        const typingElement = document.getElementById('typing-indicator');
-        if (typingElement) {
-            typingElement.remove();
+        const typingIndicator = document.getElementById('typing-indicator');
+        if (typingIndicator) {
+            typingIndicator.remove();
         }
     }
     
-    handleTyping() {
-        // Aquí puedes añadir lógica para sugerencias mientras el usuario escribe
-        const inputValue = this.chatbotInput.value.toLowerCase();
-        
-        // Mostrar sugerencias rápidas (opcional)
-        if (inputValue.length > 2) {
-            this.showQuickSuggestions(inputValue);
-        }
-    }
-    
-    showQuickSuggestions(input) {
-        // Implementar sugerencias rápidas basadas en el input
-        const suggestions = [];
-        
-        if (input.includes('precio') || input.includes('costo')) {
-            suggestions.push('¿Cuánto cuesta desarrollar una app?');
-        }
-        
-        if (input.includes('tiempo') || input.includes('cuando')) {
-            suggestions.push('¿Cuánto tiempo toma un proyecto?');
-        }
-        
-        if (input.includes('contacto')) {
-            suggestions.push('¿Cómo puedo contactarlos?');
-        }
-        
-        // Mostrar sugerencias (implementar UI si se desea)
+    getCurrentTime() {
+        return new Date().toLocaleTimeString('es-ES', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     }
     
     scrollToBottom() {
-        this.chatbotMessages.scrollTop = this.chatbotMessages.scrollHeight;
+        setTimeout(() => {
+            this.chatbotMessages.scrollTop = this.chatbotMessages.scrollHeight;
+        }, 100);
     }
     
-    trackEvent(action, label = '') {
-        // Integración con analytics
-        if (typeof window.InnovaTechApp !== 'undefined') {
-            window.InnovaTechApp.trackEvent(action, 'chatbot', label);
-        }
-        
-        console.log('Chatbot Event:', { action, label });
-    }
-    
-    // Método para añadir respuestas personalizadas
-    addCustomResponse(keywords, response) {
-        // Permitir añadir respuestas dinámicamente
-        CHATBOT_RESPONSES.custom = CHATBOT_RESPONSES.custom || {};
-        CHATBOT_RESPONSES.custom[keywords.join('_')] = response;
+    // Método para limpiar conversación
+    clearConversation() {
+        this.messages = [];
+        this.conversationHistory = [];
+        this.chatbotMessages.innerHTML = '';
+        this.addWelcomeMessage();
     }
     
     // Método para exportar conversación
@@ -396,59 +288,110 @@ class InnovaTechChatbot {
         const conversation = this.messages.map(msg => ({
             text: msg.text,
             sender: msg.sender,
-            time: msg.timestamp.toLocaleString()
+            time: msg.timestamp.toLocaleString('es-ES')
         }));
         
         return JSON.stringify(conversation, null, 2);
     }
-    
-    // Método para limpiar conversación
-    clearConversation() {
-        this.messages = [];
-        this.chatbotMessages.innerHTML = '';
-        this.addWelcomeMessage();
+}
+
+// ===== CSS ADICIONAL PARA EL TYPING INDICATOR =====
+const additionalCSS = `
+<style>
+.typing-indicator .message-content {
+    background: #f1f3f4;
+    padding: 12px 16px;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.typing-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #666;
+    animation: typing 1.5s infinite;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    30% {
+        transform: scale(1.2);
+        opacity: 1;
     }
 }
 
-// ===== UTILIDADES ADICIONALES =====
-
-// Detectar si el usuario está en móvil
-function isMobile() {
-    return window.innerWidth <= 768;
+.message-content p {
+    margin: 0;
+    line-height: 1.4;
 }
 
-// Formatear respuestas con enlaces
-function formatResponse(text) {
-    // Convertir URLs a enlaces
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    text = text.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
-    
-    // Convertir emails a enlaces
-    const emailRegex = /([^\s@]+@[^\s@]+\.[^\s@]+)/g;
-    text = text.replace(emailRegex, '<a href="mailto:$1">$1</a>');
-    
-    return text;
+.message-time {
+    font-size: 11px;
+    color: #888;
+    margin-top: 4px;
+    display: block;
 }
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #1a237e;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.user-message .message-avatar {
+    background: #00bcd4;
+}
+</style>
+`;
+
+// Inyectar CSS adicional
+document.head.insertAdjacentHTML('beforeend', additionalCSS);
 
 // ===== INICIALIZACIÓN =====
-let chatbot;
+let geminiChatbot;
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar chatbot después de que se cargue el DOM
+    // Verificar que existe la API key
+    if (GEMINI_CONFIG.apiKey === 'AIzaSyDtVbJLqjH_HiNXnW3v_l7YbtFoC7exxts') {
+        console.warn('⚠️ Recuerda configurar tu API key de Gemini en GEMINI_CONFIG.apiKey');
+    }
+    
+    // Inicializar chatbot
     setTimeout(() => {
-        chatbot = new InnovaTechChatbot();
-        console.log('InnovaTech Chatbot initialized successfully');
+        geminiChatbot = new GeminiChatbot();
+        console.log('✅ Gemini Chatbot inicializado correctamente');
     }, 1000);
 });
 
-// ===== EXPORT =====
-window.InnovaTechChatbot = InnovaTechChatbot;
-
-// ===== API PARA INTEGRACIONES EXTERNAS =====
+// ===== API PÚBLICA =====
+window.GeminiChatbot = GeminiChatbot;
 window.ChatbotAPI = {
-    sendMessage: (message) => chatbot?.addMessage(message, 'bot'),
-    clearChat: () => chatbot?.clearConversation(),
-    exportChat: () => chatbot?.exportConversation(),
-    isOpen: () => chatbot?.isOpen || false,
-    toggleChat: () => chatbot?.toggleChat()
+    sendMessage: (message) => geminiChatbot?.addMessage(message, 'bot'),
+    clearChat: () => geminiChatbot?.clearConversation(),
+    exportChat: () => geminiChatbot?.exportConversation(),
+    isOpen: () => geminiChatbot?.isOpen || false,
+    toggleChat: () => geminiChatbot?.toggleChat()
 };
