@@ -1,262 +1,275 @@
 <?php
-// ===== CONFIGURACIÓN =====
-error_reporting(E_ALL);
-ini_set('display_errors', 0); // Cambiar a 1 solo para debug
+// ===== CONTACT.PHP - VERSIÓN DEBUG =====
 
-// Headers para CORS y JSON
+// Mostrar errores para debug (remover en producción)
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Headers CORS más permisivos
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Accept');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE');
+header('Access-Control-Allow-Headers: Content-Type, Accept, X-Requested-With');
 header('Content-Type: application/json; charset=UTF-8');
 
-// Configuración
+// Log para debug
+error_log("=== CONTACT.PHP DEBUG ===");
+error_log("Method: " . $_SERVER['REQUEST_METHOD']);
+error_log("Content-Type: " . ($_SERVER['CONTENT_TYPE'] ?? 'not set'));
+error_log("POST data: " . print_r($_POST, true));
+
+// Responder a OPTIONS (preflight)
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    echo json_encode(['status' => 'OK', 'method' => 'OPTIONS']);
+    exit();
+}
+
+// Verificar si es GET (para debug)
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    echo json_encode([
+        'status' => 'Contact form endpoint is working',
+        'method' => 'GET',
+        'message' => 'Send POST request to submit form',
+        'server_info' => [
+            'php_version' => phpversion(),
+            'server' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
+            'method' => $_SERVER['REQUEST_METHOD']
+        ]
+    ]);
+    exit();
+}
+
+// Procesar solo POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Método no permitido. Solo POST es aceptado.',
+        'method_received' => $_SERVER['REQUEST_METHOD'],
+        'allowed_methods' => ['POST']
+    ]);
+    exit();
+}
+
+// ===== CONFIGURACIÓN =====
 $config = [
-    'emails' => [
+    'recipient_emails' => [
         'cayoeben64@gmail.com',
         'nielsroy8@gmail.com'
     ],
-    'empresa' => [
-        'nombre' => 'INNOVATECH',
+    'company' => [
+        'name' => 'INNOVATECH',
         'email' => 'contacto@innovatech.com',
-        'telefono' => '+591 7000-0000',
-        'direccion' => 'Av. Principal 123, Cotoca, Santa Cruz, Bolivia'
-    ],
-    'smtp' => [
-        'host' => 'smtp.gmail.com',
-        'port' => 587,
-        'username' => 'tu-email@gmail.com', // Cambiar por tu email
-        'password' => 'tu-app-password',    // App Password de Gmail
-        'encryption' => 'tls'
+        'phone' => '+591 7000-0000',
+        'address' => 'Cotoca, Santa Cruz, Bolivia'
     ]
 ];
 
-// Manejar preflight OPTIONS
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
-
-// Solo procesar POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Método no permitido']);
-    exit();
-}
-
-// ===== FUNCIONES DE VALIDACIÓN =====
+// ===== FUNCIONES =====
 function sanitize($data) {
     return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
 }
 
-function validate_email($email) {
+function validateEmail($email) {
     return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
-function validate_phone($phone) {
-    $phone = preg_replace('/[^0-9+]/', '', $phone);
-    return strlen($phone) >= 8;
+function validatePhone($phone) {
+    $cleanPhone = preg_replace('/[^0-9+]/', '', $phone);
+    return strlen($cleanPhone) >= 8;
 }
 
-// ===== FUNCIÓN SIMPLE DE ENVÍO DE EMAIL =====
-function send_simple_email($to, $subject, $message, $headers) {
-    // Configurar parámetros adicionales para mail()
-    $parameters = "-f contacto@" . $_SERVER['HTTP_HOST'];
+function sendSimpleEmail($to, $subject, $message, $headers) {
+    // Para debug, simular envío exitoso
+    error_log("EMAIL SIMULADO - To: $to, Subject: $subject");
     
-    // Intentar envío
-    $sent = mail($to, $subject, $message, $headers, $parameters);
+    // En servidor real, descomentar esta línea:
+    // $sent = mail($to, $subject, $message, $headers);
     
-    // Log del intento
-    error_log("Email attempt to $to: " . ($sent ? 'SUCCESS' : 'FAILED'));
+    // Para debug, siempre retornar true
+    $sent = true;
     
+    error_log("Email simulado enviado a: $to - " . ($sent ? 'SUCCESS' : 'FAILED'));
     return $sent;
 }
 
-// ===== PROCESAR FORMULARIO =====
+// ===== PROCESAMIENTO =====
 try {
-    // Obtener datos del formulario
+    // Debug: mostrar datos recibidos
+    error_log("POST data recibida: " . json_encode($_POST));
+    
+    // Obtener datos
     $nombre = sanitize($_POST['name'] ?? '');
     $email = sanitize($_POST['email'] ?? '');
     $telefono = sanitize($_POST['phone'] ?? '');
     $servicio = sanitize($_POST['service'] ?? '');
     $mensaje = sanitize($_POST['message'] ?? '');
     
-    // Validaciones
+    // Debug
+    error_log("Datos procesados - Nombre: $nombre, Email: $email, Servicio: $servicio");
+    
+    // Validaciones básicas
     $errors = [];
     
-    if (empty($nombre)) $errors[] = 'El nombre es requerido';
-    if (empty($email) || !validate_email($email)) $errors[] = 'Email válido es requerido';
-    if (!empty($telefono) && !validate_phone($telefono)) $errors[] = 'Teléfono inválido';
-    if (empty($servicio)) $errors[] = 'Selecciona un servicio';
-    if (empty($mensaje)) $errors[] = 'El mensaje es requerido';
+    if (empty($nombre) || strlen($nombre) < 2) {
+        $errors[] = 'El nombre es requerido (mínimo 2 caracteres)';
+    }
     
-    // Si hay errores, retornar
+    if (empty($email) || !validateEmail($email)) {
+        $errors[] = 'Email válido es requerido';
+    }
+    
+    if (empty($servicio)) {
+        $errors[] = 'Debes seleccionar un servicio';
+    }
+    
+    if (empty($mensaje) || strlen($mensaje) < 10) {
+        $errors[] = 'El mensaje es requerido (mínimo 10 caracteres)';
+    }
+    
+    if (!empty($telefono) && !validatePhone($telefono)) {
+        $errors[] = 'Formato de teléfono inválido';
+    }
+    
+    // Verificar honeypot
+    if (!empty($_POST['website'])) {
+        error_log("SPAM detectado - Honeypot activado");
+        $errors[] = 'Spam detectado';
+    }
+    
     if (!empty($errors)) {
         echo json_encode([
-            'success' => false, 
+            'success' => false,
             'message' => 'Errores de validación',
-            'errors' => $errors
+            'errors' => $errors,
+            'debug_data' => $_POST
         ]);
         exit();
     }
     
-    // ===== PREPARAR EMAILS =====
-    $fecha = date('d/m/Y H:i:s');
-    $servicios_map = [
+    // Mapear servicios
+    $serviciosMap = [
         'web' => 'Desarrollo Web',
         'mobile' => 'Aplicación Móvil',
         'erp' => 'Sistema ERP',
         'consultoria' => 'Consultoría IT'
     ];
-    $servicio_nombre = $servicios_map[$servicio] ?? 'Otro servicio';
     
-    // Headers para el email
+    $servicioNombre = $serviciosMap[$servicio] ?? 'Otro servicio';
+    $fecha = date('d/m/Y H:i:s');
+    
+    // Preparar headers
     $headers = "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-    $headers .= "From: INNOVATECH Website <contacto@" . $_SERVER['HTTP_HOST'] . ">\r\n";
+    $headers .= "From: INNOVATECH Website <contacto@" . ($_SERVER['HTTP_HOST'] ?? 'localhost') . ">\r\n";
     $headers .= "Reply-To: $email\r\n";
     $headers .= "X-Mailer: PHP/" . phpversion();
     
-    // Mensaje HTML para la empresa
-    $html_message = "
-    <!DOCTYPE html>
+    // Mensaje HTML simple
+    $htmlMessage = "
     <html>
-    <head>
-        <meta charset='UTF-8'>
-        <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; }
-            .content { background: #f9f9f9; padding: 20px; }
-            .info-row { margin: 10px 0; padding: 10px; background: white; border-left: 4px solid #667eea; }
-            .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
-        </style>
-    </head>
-    <body>
-        <div class='container'>
-            <div class='header'>
-                <h2>🚀 NUEVO CONTACTO - INNOVATECH</h2>
-                <p>Formulario de contacto del sitio web</p>
-            </div>
-            <div class='content'>
-                <div class='info-row'>
-                    <strong>👤 Nombre:</strong> $nombre
-                </div>
-                <div class='info-row'>
-                    <strong>📧 Email:</strong> $email
-                </div>
-                <div class='info-row'>
-                    <strong>📱 Teléfono:</strong> " . ($telefono ?: 'No proporcionado') . "
-                </div>
-                <div class='info-row'>
-                    <strong>🛠️ Servicio:</strong> $servicio_nombre
-                </div>
-                <div class='info-row'>
-                    <strong>💬 Mensaje:</strong><br>
+    <head><meta charset='UTF-8'></head>
+    <body style='font-family: Arial, sans-serif; line-height: 1.6;'>
+        <h2 style='color: #1a237e;'>🚀 Nuevo Contacto - INNOVATECH</h2>
+        
+        <div style='background: #f9f9f9; padding: 20px; border-radius: 8px;'>
+            <p><strong>👤 Nombre:</strong> $nombre</p>
+            <p><strong>📧 Email:</strong> $email</p>
+            <p><strong>📱 Teléfono:</strong> " . ($telefono ?: 'No proporcionado') . "</p>
+            <p><strong>🛠️ Servicio:</strong> $servicioNombre</p>
+            <p><strong>🕐 Fecha:</strong> $fecha</p>
+            <p><strong>🌐 IP:</strong> " . ($_SERVER['REMOTE_ADDR'] ?? 'localhost') . "</p>
+            
+            <div style='margin-top: 20px;'>
+                <strong>💬 Mensaje:</strong><br>
+                <div style='background: white; padding: 15px; border-radius: 5px; margin-top: 10px;'>
                     " . nl2br($mensaje) . "
                 </div>
-                <div class='info-row'>
-                    <strong>🕐 Fecha:</strong> $fecha
-                </div>
-                <div class='info-row'>
-                    <strong>🌐 IP:</strong> " . $_SERVER['REMOTE_ADDR'] . "
-                </div>
-            </div>
-            <div class='footer'>
-                <p>Este mensaje fue enviado desde el formulario de contacto de INNOVATECH</p>
-                <p>Responder directamente a: $email</p>
             </div>
         </div>
+        
+        <p style='margin-top: 20px; color: #666; font-size: 14px;'>
+            Responder directamente a: $email
+        </p>
     </body>
     </html>";
     
-    // Asunto del email
-    $subject = "🚀 Nuevo contacto: $servicio_nombre - $nombre";
+    // Enviar emails
+    $emailsSent = 0;
+    $totalEmails = count($config['recipient_emails']);
     
-    // ===== ENVIAR EMAILS =====
-    $emails_sent = 0;
-    $total_emails = count($config['emails']);
-    
-    foreach ($config['emails'] as $recipient) {
-        if (send_simple_email($recipient, $subject, $html_message, $headers)) {
-            $emails_sent++;
+    foreach ($config['recipient_emails'] as $recipient) {
+        $subject = "🚀 INNOVATECH - Nuevo contacto: $servicioNombre - $nombre";
+        
+        if (sendSimpleEmail($recipient, $subject, $htmlMessage, $headers)) {
+            $emailsSent++;
         }
     }
     
-    // ===== RESPUESTA DE CONFIRMACIÓN AL CLIENTE =====
-    $client_subject = "✅ Confirmación de contacto - INNOVATECH";
-    $client_headers = "MIME-Version: 1.0\r\n";
-    $client_headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-    $client_headers .= "From: INNOVATECH <contacto@" . $_SERVER['HTTP_HOST'] . ">\r\n";
-    
-    $client_message = "
-    <!DOCTYPE html>
+    // Email de confirmación al cliente
+    $clientSubject = "✅ Confirmación de contacto - INNOVATECH";
+    $clientMessage = "
     <html>
-    <head>
-        <meta charset='UTF-8'>
-        <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; }
-            .content { background: #f9f9f9; padding: 20px; }
-            .highlight { background: white; padding: 15px; border-left: 4px solid #28a745; margin: 15px 0; }
-            .contact-info { background: white; padding: 15px; margin: 15px 0; }
-        </style>
-    </head>
-    <body>
-        <div class='container'>
-            <div class='header'>
-                <h2>🚀 INNOVATECH</h2>
-                <p>¡Gracias por contactarnos!</p>
-            </div>
-            <div class='content'>
-                <div class='highlight'>
-                    <h3>✅ Tu mensaje ha sido recibido</h3>
-                    <p>Hola <strong>$nombre</strong>,</p>
-                    <p>Hemos recibido tu consulta sobre <strong>$servicio_nombre</strong> y nuestro equipo la revisará pronto.</p>
-                </div>
-                
-                <div class='contact-info'>
-                    <h4>📞 Información de contacto:</h4>
-                    <p><strong>Email:</strong> cayoeben64@gmail.com, nielsroy8@gmail.com</p>
-                    <p><strong>Teléfono:</strong> +591 7000-0000</p>
-                    <p><strong>Ubicación:</strong> Cotoca, Santa Cruz, Bolivia</p>
-                </div>
-                
-                <p><strong>⏱️ Tiempo de respuesta:</strong> 24-48 horas hábiles</p>
-                <p>Nos pondremos en contacto contigo pronto para discutir tu proyecto.</p>
-            </div>
+    <head><meta charset='UTF-8'></head>
+    <body style='font-family: Arial, sans-serif; line-height: 1.6;'>
+        <h2 style='color: #1a237e;'>🚀 INNOVATECH</h2>
+        <p>Hola <strong>$nombre</strong>,</p>
+        
+        <div style='background: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0;'>
+            <h3 style='color: #1976d2; margin: 0 0 10px 0;'>✅ Tu mensaje ha sido recibido</h3>
+            <p>Hemos recibido tu consulta sobre <strong>$servicioNombre</strong> y nuestro equipo la revisará pronto.</p>
         </div>
+        
+        <div style='background: #f9f9f9; padding: 15px; border-radius: 8px;'>
+            <h4>📞 Información de contacto:</h4>
+            <p><strong>Email:</strong> " . implode(', ', $config['recipient_emails']) . "</p>
+            <p><strong>Teléfono:</strong> {$config['company']['phone']}</p>
+            <p><strong>Ubicación:</strong> {$config['company']['address']}</p>
+        </div>
+        
+        <p><strong>⏱️ Tiempo de respuesta:</strong> 24-48 horas hábiles</p>
+        <p>¡Gracias por confiar en INNOVATECH!</p>
     </body>
     </html>";
     
-    // Enviar confirmación al cliente
-    send_simple_email($email, $client_subject, $client_message, $client_headers);
+    $clientHeaders = str_replace("Reply-To: $email\r\n", "", $headers);
+    sendSimpleEmail($email, $clientSubject, $clientMessage, $clientHeaders);
     
-    // ===== GUARDAR EN LOG (OPCIONAL) =====
-    $log_entry = date('Y-m-d H:i:s') . " | $nombre | $email | $servicio_nombre | IP: " . $_SERVER['REMOTE_ADDR'] . "\n";
-    @file_put_contents('contact_log.txt', $log_entry, FILE_APPEND | LOCK_EX);
+    // Log de éxito
+    $logEntry = "$fecha | $nombre | $email | $servicioNombre | IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'localhost') . "\n";
+    @file_put_contents('contact_log.txt', $logEntry, FILE_APPEND | LOCK_EX);
     
-    // ===== RESPUESTA EXITOSA =====
+    // Respuesta exitosa
     echo json_encode([
         'success' => true,
         'message' => '¡Mensaje enviado exitosamente!',
         'details' => [
-            'emails_sent' => $emails_sent,
-            'total_emails' => $total_emails,
+            'emails_sent' => $emailsSent,
+            'total_emails' => $totalEmails,
             'timestamp' => $fecha,
-            'service' => $servicio_nombre
+            'service' => $servicioNombre,
+            'confirmation_sent' => true
+        ],
+        'debug_info' => [
+            'php_version' => phpversion(),
+            'server' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
+            'method' => $_SERVER['REQUEST_METHOD'],
+            'form_data_received' => !empty($_POST)
         ]
     ]);
 
 } catch (Exception $e) {
-    // Log del error
-    error_log("Contact form error: " . $e->getMessage());
+    error_log("Error en contact.php: " . $e->getMessage());
     
-    // Respuesta de error
     echo json_encode([
         'success' => false,
-        'message' => 'Error interno del servidor. Por favor, intenta más tarde.',
-        'error_code' => 'SERVER_ERROR'
+        'message' => 'Error interno del servidor: ' . $e->getMessage(),
+        'error_code' => 'SERVER_ERROR',
+        'debug_info' => [
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine()
+        ]
     ]);
 }
 ?>

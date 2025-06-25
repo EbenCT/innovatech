@@ -1,13 +1,20 @@
-// ===== FORMS.JS - MÓDULO DE FORMULARIOS =====
+// ===== FORMS.JS - FORMULARIO CON FORMSPREE + WHATSAPP =====
 
 const FormsModule = (function() {
     'use strict';
 
     // ===== CONFIGURACIÓN =====
     const CONFIG = {
-        endpoint: './contact.php',
+        // Formspree endpoint - CAMBIAR POR TU ID ÚNICO
+        endpoint: 'https://formspree.io/f/xzzgkjzg', // 👈 CAMBIAR ESTO
         timeout: 15000,
-        retries: 2
+        retries: 2,
+        whatsapp: {
+            numbers: [
+                '+59163332108',
+                '+59172474541'
+            ]
+        }
     };
 
     // ===== VARIABLES PRIVADAS =====
@@ -26,7 +33,26 @@ const FormsModule = (function() {
         setupFormValidation();
         setupFormSubmission();
         addFormStyles();
+        showFormspreeInstructions();
+        
         console.log('✅ FormsModule inicializado');
+    }
+
+    // ===== INSTRUCCIONES DE FORMSPREE =====
+    function showFormspreeInstructions() {
+        if (CONFIG.endpoint.includes('YOUR_FORM_ID')) {
+            console.warn(`
+🔧 CONFIGURACIÓN REQUERIDA - FORMSPREE:
+
+1. Ve a: https://formspree.io/
+2. Regístrate gratis con tu email
+3. Crea un nuevo formulario
+4. Copia tu endpoint (algo como: https://formspree.io/f/abcd1234)
+5. Reemplaza en CONFIG.endpoint en forms.js
+
+📧 Los emails llegarán a: ${CONFIG.whatsapp.numbers.join(', ')}
+            `);
+        }
     }
 
     // ===== CONFIGURACIÓN DE VALIDACIÓN =====
@@ -34,28 +60,14 @@ const FormsModule = (function() {
         const inputs = contactForm.querySelectorAll('input, textarea, select');
         
         inputs.forEach(input => {
-            // Validación en tiempo real
             input.addEventListener('blur', validateField);
             input.addEventListener('input', UtilsModule.debounce(clearFieldError, 300));
-            
-            // Prevenir envío con Enter en inputs (excepto textarea)
-            if (input.tagName !== 'TEXTAREA') {
-                input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        const submitBtn = contactForm.querySelector('button[type="submit"]');
-                        if (submitBtn) submitBtn.click();
-                    }
-                });
-            }
         });
     }
 
     // ===== CONFIGURACIÓN DE ENVÍO =====
     function setupFormSubmission() {
         contactForm.addEventListener('submit', handleFormSubmit);
-        
-        // Agregar campo honeypot si no existe
         addHoneypotField();
     }
 
@@ -66,23 +78,20 @@ const FormsModule = (function() {
         const fieldName = field.getAttribute('name');
         const isRequired = field.hasAttribute('required');
         
-        // Limpiar error previo
         clearFieldError({ target: field });
         
-        // Validar campo requerido
         if (isRequired && !value) {
             showFieldError(field, `El campo ${getFieldLabel(fieldName)} es requerido`);
             return false;
         }
         
-        // Validaciones específicas
         if (fieldName === 'email' && value && !UtilsModule.isValidEmail(value)) {
             showFieldError(field, 'Por favor, ingresa un email válido');
             return false;
         }
         
         if (fieldName === 'phone' && value && !UtilsModule.isValidPhone(value)) {
-            showFieldError(field, 'Por favor, ingresa un teléfono válido (mínimo 8 dígitos)');
+            showFieldError(field, 'Por favor, ingresa un teléfono válido');
             return false;
         }
         
@@ -96,7 +105,6 @@ const FormsModule = (function() {
             return false;
         }
         
-        // Validación exitosa - marcar como válido
         field.classList.add('valid');
         return true;
     }
@@ -114,18 +122,14 @@ const FormsModule = (function() {
         return isValid;
     }
 
-    // ===== MANEJO DE ENVÍO DEL FORMULARIO =====
+    // ===== MANEJO DE ENVÍO =====
     async function handleFormSubmit(e) {
         e.preventDefault();
         
-        // Prevenir envíos múltiples
-        if (isSubmitting) {
-            return;
-        }
+        if (isSubmitting) return;
         
         console.log('📤 Iniciando envío de formulario...');
         
-        // Validar todos los campos
         if (!validateAllFields()) {
             UtilsModule.showNotification(
                 'Por favor, corrige los errores en el formulario antes de enviarlo.',
@@ -133,38 +137,38 @@ const FormsModule = (function() {
             );
             return;
         }
+
+        // Verificar configuración
+        if (CONFIG.endpoint.includes('YOUR_FORM_ID')) {
+            UtilsModule.showNotification(
+                'El formulario no está configurado. Revisa la consola para instrucciones.',
+                'warning'
+            );
+            showFormspreeInstructions();
+            return;
+        }
         
         isSubmitting = true;
         const submitBtn = contactForm.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
         
-        // Mostrar estado de carga
         setLoadingState(submitBtn, true);
         
         try {
-            // Preparar datos del formulario
             const formData = new FormData(contactForm);
-            
-            // Sanitizar datos
-            for (const [key, value] of formData.entries()) {
-                if (typeof value === 'string') {
-                    formData.set(key, UtilsModule.sanitizeInput(value));
-                }
-            }
-            
-            // Enviar formulario
             const response = await sendFormData(formData);
             
-            if (response.success) {
-                handleFormSuccess(response);
+            if (response.ok) {
+                handleFormSuccess();
             } else {
-                handleFormError(response);
+                const errorData = await response.json();
+                handleFormError(errorData);
             }
             
         } catch (error) {
             console.error('❌ Error al enviar formulario:', error);
             handleFormError({ 
-                message: 'Error de conexión. Por favor, verifica tu internet e intenta nuevamente.',
+                message: 'Error de conexión. Por favor, intenta nuevamente.',
                 error_code: 'CONNECTION_ERROR'
             });
         } finally {
@@ -173,55 +177,38 @@ const FormsModule = (function() {
         }
     }
 
-    // ===== ENVÍO DE DATOS =====
+    // ===== ENVÍO CON FORMSPREE =====
     async function sendFormData(formData, attempt = 1) {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), CONFIG.timeout);
-        
         try {
-            console.log(`📡 Enviando datos... (intento ${attempt})`);
+            console.log(`📡 Enviando a Formspree... (intento ${attempt})`);
             
             const response = await fetch(CONFIG.endpoint, {
                 method: 'POST',
                 body: formData,
-                signal: controller.signal,
                 headers: {
                     'Accept': 'application/json'
                 }
             });
             
-            clearTimeout(timeoutId);
+            console.log('📬 Respuesta de Formspree:', response.status, response.statusText);
             
-            // Verificar tipo de contenido
-            const contentType = response.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                throw new Error('El servidor no devolvió una respuesta JSON válida');
+            if (response.ok) {
+                console.log('✅ Formulario enviado exitosamente via Formspree');
+                return response;
+            } else {
+                // Reintentar si es error temporal
+                if (attempt < CONFIG.retries && response.status >= 500) {
+                    console.log(`🔄 Reintentando envío (${attempt + 1}/${CONFIG.retries})...`);
+                    await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
+                    return sendFormData(formData, attempt + 1);
+                }
+                
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
             }
-            
-            const data = await response.json();
-            
-            if (!response.ok) {
-                throw new Error(data.message || `Error HTTP ${response.status}`);
-            }
-            
-            console.log('✅ Formulario enviado exitosamente:', data);
-            return data;
             
         } catch (error) {
-            clearTimeout(timeoutId);
-            
-            // Manejar timeout
-            if (error.name === 'AbortError') {
-                throw new Error('Tiempo de espera agotado. El servidor tardó demasiado en responder.');
-            }
-            
-            // Reintentar en caso de error de red
-            if (attempt < CONFIG.retries && 
-                (error.message.includes('fetch') || 
-                 error.message.includes('network') ||
-                 error.message.includes('conexión'))) {
-                
-                console.log(`🔄 Reintentando envío (${attempt + 1}/${CONFIG.retries})...`);
+            if (attempt < CONFIG.retries) {
+                console.log(`🔄 Reintentando por error de red (${attempt + 1}/${CONFIG.retries})...`);
                 await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
                 return sendFormData(formData, attempt + 1);
             }
@@ -231,94 +218,160 @@ const FormsModule = (function() {
     }
 
     // ===== MANEJO DE RESPUESTAS =====
-    function handleFormSuccess(response) {
+    function handleFormSuccess() {
         console.log('🎉 Formulario enviado exitosamente');
         
-        // Limpiar formulario
         contactForm.reset();
         
-        // Remover clases de validación
         const inputs = contactForm.querySelectorAll('input, textarea, select');
         inputs.forEach(input => {
             input.classList.remove('valid', 'error');
         });
         
-        // Mensaje de éxito personalizado
-        let message = '🚀 ¡Mensaje enviado exitosamente!\n\n';
-        message += '✅ Te contactaremos pronto\n';
-        
-        if (response.details) {
-            message += `📧 Emails enviados: ${response.details.emails_sent}/${response.details.total_emails}\n`;
-            message += `🕐 Enviado: ${response.details.timestamp}`;
-        }
-        
-        message += '\n\n¡Gracias por confiar en INNOVATECH!';
+        const message = `🚀 ¡Mensaje enviado exitosamente!
+
+✅ Tu mensaje ha sido recibido
+📧 Te contactaremos pronto por email
+⏱️ Tiempo de respuesta: 24-48 horas
+
+¡Gracias por confiar en INNOVATECH!`;
         
         UtilsModule.showNotification(message, 'success', 8000);
         
-        // Scroll al inicio de la página
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
-        // Analytics
         if (window.InnovaTechApp && window.InnovaTechApp.trackEvent) {
             window.InnovaTechApp.trackEvent('form_submit', 'contact', 'success');
         }
         
-        // Mostrar modal de confirmación (opcional)
-        showSuccessModal(response);
+        // Mostrar opciones de contacto adicionales
+        setTimeout(() => {
+            showContactOptions();
+        }, 3000);
     }
 
     function handleFormError(response) {
         console.error('❌ Error en el formulario:', response);
         
-        let message = response.message || 'Error al enviar el formulario';
+        let message = 'Error al enviar el formulario. ';
         
-        // Mostrar errores específicos si existen
-        if (response.errors && Array.isArray(response.errors)) {
-            message += ':\n\n• ' + response.errors.join('\n• ');
+        if (response.errors) {
+            message += 'Por favor, revisa los campos e intenta nuevamente.';
+        } else {
+            message += 'Por favor, intenta nuevamente o contáctanos directamente.';
         }
         
         UtilsModule.showNotification(message, 'error', 6000);
         
-        // Analytics
         if (window.InnovaTechApp && window.InnovaTechApp.trackEvent) {
             window.InnovaTechApp.trackEvent('form_error', 'contact', response.error_code || 'unknown');
         }
         
-        // Mostrar información de contacto alternativa después de un momento
         setTimeout(() => {
             showAlternativeContact();
-        }, 3000);
+        }, 2000);
+    }
+
+    // ===== OPCIONES DE CONTACTO =====
+    function showContactOptions() {
+        const message = `💬 ¿Necesitas respuesta inmediata?
+
+También puedes contactarnos por WhatsApp:
+
+📱 WhatsApp 1: ${CONFIG.whatsapp.numbers[0]}
+📱 WhatsApp 2: ${CONFIG.whatsapp.numbers[1]}
+📧 Email: cayoeben64@gmail.com, nielsroy8@gmail.com
+
+¡Estamos aquí para ayudarte!`;
+        
+        UtilsModule.showNotification(message, 'info', 10000);
+        
+        // Mostrar modal con enlaces directos
+        showWhatsAppModal();
+    }
+
+    function showAlternativeContact() {
+        const message = `Si tienes problemas con el formulario, contáctanos directamente:
+
+📱 WhatsApp: ${CONFIG.whatsapp.numbers.join(', ')}
+📧 Email: cayoeben64@gmail.com, nielsroy8@gmail.com
+📍 Ubicación: Cotoca, Santa Cruz, Bolivia
+
+¡Estaremos encantados de ayudarte!`;
+        
+        UtilsModule.showNotification(message.trim(), 'info', 12000);
+        showWhatsAppModal();
+    }
+
+    // ===== MODAL DE WHATSAPP =====
+    function showWhatsAppModal() {
+        const modal = document.createElement('div');
+        modal.className = 'whatsapp-modal-overlay';
+        modal.innerHTML = `
+            <div class="whatsapp-modal">
+                <div class="modal-header">
+                    <h3>💬 Contacto Directo</h3>
+                    <button class="modal-close" onclick="this.closest('.whatsapp-modal-overlay').remove()">
+                        ×
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>¿Necesitas ayuda inmediata?</strong></p>
+                    <p>Contáctanos directamente por WhatsApp:</p>
+                    
+                    <div class="whatsapp-buttons">
+                        ${CONFIG.whatsapp.numbers.map((number, index) => `
+                            <a href="https://wa.me/${number.replace(/[^0-9]/g, '')}?text=Hola%20INNOVATECH,%20me%20interesa%20información%20sobre%20sus%20servicios" 
+                               target="_blank" 
+                               class="whatsapp-btn">
+                                <span class="whatsapp-icon">📱</span>
+                                <div>
+                                    <div class="whatsapp-label">WhatsApp ${index + 1}</div>
+                                    <div class="whatsapp-number">${number}</div>
+                                </div>
+                            </a>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="contact-info">
+                        <h4>📧 Otros medios de contacto:</h4>
+                        <p><strong>Email:</strong> cayoeben64@gmail.com, nielsroy8@gmail.com</p>
+                        <p><strong>Ubicación:</strong> Cotoca, Santa Cruz, Bolivia</p>
+                        <p><strong>Horario:</strong> Lunes a Viernes, 8:00 AM - 6:00 PM</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Auto-cerrar después de 30 segundos
+        setTimeout(() => {
+            if (modal.parentNode) {
+                modal.remove();
+            }
+        }, 30000);
     }
 
     // ===== UTILIDADES DE UI =====
     function showFieldError(field, message) {
-        // Remover error previo
         clearFieldError({ target: field });
         
-        // Marcar campo como error
         field.classList.remove('valid');
         field.classList.add('error');
         
-        // Crear mensaje de error
         const errorDiv = document.createElement('div');
         errorDiv.className = 'field-error-message';
         errorDiv.textContent = message;
         
-        // Insertar después del campo
         field.parentNode.insertBefore(errorDiv, field.nextSibling);
-        
-        // Enfocar el campo con error
         field.focus();
     }
 
     function clearFieldError(e) {
         const field = e.target;
-        
-        // Remover clases de error
         field.classList.remove('error');
         
-        // Remover mensaje de error
         const errorMessage = field.parentNode.querySelector('.field-error-message');
         if (errorMessage) {
             errorMessage.remove();
@@ -340,78 +393,6 @@ const FormsModule = (function() {
         }
     }
 
-    // ===== MODAL DE ÉXITO =====
-    function showSuccessModal(response) {
-        const modal = document.createElement('div');
-        modal.className = 'success-modal-overlay';
-        modal.innerHTML = `
-            <div class="success-modal">
-                <div class="modal-header">
-                    <h3>🚀 ¡Mensaje Enviado!</h3>
-                    <button class="modal-close" onclick="this.closest('.success-modal-overlay').remove()">
-                        ×
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="success-icon">✅</div>
-                    <p><strong>Tu mensaje ha sido enviado exitosamente a nuestro equipo.</strong></p>
-                    
-                    <div class="success-details">
-                        <div class="detail-item">
-                            <span class="icon">📧</span>
-                            <span>Emails enviados: ${response.details?.emails_sent || 1}/${response.details?.total_emails || 1}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="icon">🕐</span>
-                            <span>Enviado: ${response.details?.timestamp || new Date().toLocaleString()}</span>
-                        </div>
-                        <div class="detail-item">
-                            <span class="icon">⏱️</span>
-                            <span>Tiempo de respuesta: 24-48 horas hábiles</span>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-info">
-                        <h4>📞 Información de contacto:</h4>
-                        <p><strong>Email:</strong> cayoeben64@gmail.com, nielsroy8@gmail.com</p>
-                        <p><strong>Teléfono:</strong> +591 7000-0000</p>
-                        <p><strong>Ubicación:</strong> Cotoca, Santa Cruz, Bolivia</p>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button onclick="this.closest('.success-modal-overlay').remove()" class="btn-primary">
-                        Entendido
-                    </button>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(modal);
-        
-        // Auto-cerrar después de 15 segundos
-        setTimeout(() => {
-            if (modal.parentNode) {
-                modal.remove();
-            }
-        }, 15000);
-    }
-
-    // ===== CONTACTO ALTERNATIVO =====
-    function showAlternativeContact() {
-        const message = `
-Si tienes problemas con el formulario, también puedes contactarnos directamente:
-
-📧 Email: cayoeben64@gmail.com, nielsroy8@gmail.com
-📱 Teléfono: +591 7000-0000
-📍 Ubicación: Cotoca, Santa Cruz, Bolivia
-
-¡Estaremos encantados de ayudarte!
-        `;
-        
-        UtilsModule.showNotification(message.trim(), 'info', 12000);
-    }
-
-    // ===== UTILIDADES =====
     function getFieldLabel(fieldName) {
         const labels = {
             'name': 'Nombre',
@@ -424,11 +405,10 @@ Si tienes problemas con el formulario, también puedes contactarnos directamente
     }
 
     function addHoneypotField() {
-        // Campo honeypot para prevenir spam
-        if (!contactForm.querySelector('input[name="website"]')) {
+        if (!contactForm.querySelector('input[name="_gotcha"]')) {
             const honeypot = document.createElement('input');
             honeypot.type = 'text';
-            honeypot.name = 'website';
+            honeypot.name = '_gotcha';
             honeypot.style.cssText = 'display:none !important; position:absolute; left:-9999px;';
             honeypot.tabIndex = -1;
             honeypot.autocomplete = 'off';
@@ -438,7 +418,6 @@ Si tienes problemas con el formulario, también puedes contactarnos directamente
     }
 
     function addFormStyles() {
-        // Agregar estilos necesarios para el formulario
         if (!document.querySelector('#form-styles')) {
             const style = document.createElement('style');
             style.id = 'form-styles';
@@ -479,7 +458,8 @@ Si tienes problemas con el formulario, también puedes contactarnos directamente
                     to { transform: rotate(360deg); }
                 }
                 
-                .success-modal-overlay {
+                /* Modal de WhatsApp */
+                .whatsapp-modal-overlay {
                     position: fixed;
                     top: 0;
                     left: 0;
@@ -493,7 +473,7 @@ Si tienes problemas con el formulario, también puedes contactarnos directamente
                     animation: fadeIn 0.3s ease;
                 }
                 
-                .success-modal {
+                .whatsapp-modal {
                     background: white;
                     border-radius: 12px;
                     max-width: 500px;
@@ -525,35 +505,54 @@ Si tienes problemas con el formulario, también puedes contactarnos directamente
                 
                 .modal-body {
                     padding: 20px;
-                    text-align: center;
                 }
                 
-                .success-icon {
-                    font-size: 48px;
-                    margin-bottom: 20px;
-                }
-                
-                .success-details {
-                    text-align: left;
+                .whatsapp-buttons {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 15px;
                     margin: 20px 0;
                 }
                 
-                .detail-item {
+                .whatsapp-btn {
                     display: flex;
                     align-items: center;
-                    gap: 10px;
-                    margin: 10px 0;
-                    padding: 8px 12px;
-                    background: #f8f9fa;
-                    border-radius: 6px;
+                    gap: 15px;
+                    padding: 15px;
+                    background: linear-gradient(135deg, #25D366, #128C7E);
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 12px;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+                }
+                
+                .whatsapp-btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+                    color: white;
+                }
+                
+                .whatsapp-icon {
+                    font-size: 24px;
+                    flex-shrink: 0;
+                }
+                
+                .whatsapp-label {
+                    font-weight: bold;
+                    font-size: 16px;
+                }
+                
+                .whatsapp-number {
+                    font-size: 14px;
+                    opacity: 0.9;
                 }
                 
                 .contact-info {
-                    text-align: left;
-                    margin-top: 20px;
+                    background: #f8f9fa;
                     padding: 15px;
-                    background: #e3f2fd;
                     border-radius: 8px;
+                    margin-top: 20px;
                 }
                 
                 .contact-info h4 {
@@ -561,19 +560,9 @@ Si tienes problemas con el formulario, también puedes contactarnos directamente
                     color: #1a237e;
                 }
                 
-                .modal-footer {
-                    padding: 0 20px 20px;
-                    text-align: center;
-                }
-                
-                .btn-primary {
-                    background: linear-gradient(135deg, #1a237e, #3f51b5);
-                    color: white;
-                    border: none;
-                    padding: 12px 24px;
-                    border-radius: 6px;
-                    cursor: pointer;
-                    font-weight: 600;
+                .contact-info p {
+                    margin: 5px 0;
+                    font-size: 14px;
                 }
                 
                 @keyframes fadeIn {
@@ -599,13 +588,13 @@ Si tienes problemas con el formulario, también puedes contactarnos directamente
         showFieldError,
         clearFieldError,
         showAlternativeContact,
+        showContactOptions,
+        showWhatsAppModal,
         
-        // Getters
         get isSubmitting() { return isSubmitting; },
         get contactForm() { return contactForm; },
         get config() { return CONFIG; }
     };
 })();
 
-// Disponible globalmente
 window.FormsModule = FormsModule;
