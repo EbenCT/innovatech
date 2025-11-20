@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soporte Técnico - INNOVATECH</title>
+    <title>Soporte Técnico - CODEPRIME</title>
     
-    <meta name="description" content="Centro de soporte técnico de INNOVATECH. Documentación, FAQ, tickets de soporte y asistencia técnica especializada 24/7">
+    <meta name="description" content="Centro de soporte técnico de CODEPRIME. Documentación, FAQ, tickets de soporte y asistencia técnica especializada 24/7">
     <meta name="keywords" content="soporte técnico, ayuda, documentación, FAQ, tickets, asistencia técnica, troubleshooting">
     
     <link href="../css/styles.css" rel="stylesheet">
@@ -17,9 +17,9 @@
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <img src="../assets/img/logo.png" alt="INNOVATECH" class="logo">
+                <img src="../assets/img/logo.png" alt="CODEPRIME" class="logo">
                 <a href="../index.html" style="color: inherit; text-decoration: none;">
-                    <span>INNOVATECH</span>
+                    <span>CODEPRIME</span>
                 </a>
             </div>
             
@@ -155,7 +155,7 @@
             <div class="services-status">
                 <div class="service-item">
                     <div class="service-info">
-                        <span class="service-name">InnovaTech Manager API</span>
+                        <span class="service-name">CODEPRIME Manager API</span>
                         <span class="service-description">Servicios principales de la aplicación</span>
                     </div>
                     <div class="service-status operational">
@@ -557,7 +557,7 @@
                         </div>
                         <div class="method-details">
                             <h4>Email de Soporte</h4>
-                            <p>soporte@InnovaTech.com</p>
+                            <p>soporte@CODEPRIME.com</p>
                             <span class="method-note">Respuesta en 4-24 horas</span>
                         </div>
                     </div>
@@ -641,9 +641,9 @@
                                 <label for="ticketProduct">Producto *</label>
                                 <select id="ticketProduct" name="product" required>
                                     <option value="">Selecciona un producto</option>
-                                    <option value="InnovaTech-manager">InnovaTech Manager</option>
-                                    <option value="InnovaTech-ide">InnovaTech IDE</option>
-                                    <option value="InnovaTech-analytics">InnovaTech Analytics</option>
+                                    <option value="CODEPRIME-manager">CODEPRIME Manager</option>
+                                    <option value="CODEPRIME-ide">CODEPRIME IDE</option>
+                                    <option value="CODEPRIME-analytics">CODEPRIME Analytics</option>
                                     <option value="custom-solution">Solución Personalizada</option>
                                     <option value="other">Otro</option>
                                 </select>
@@ -753,7 +753,7 @@
                     <div class="card-icon">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
-                    <h3>InnovaTech Academy</h3>
+                    <h3>CODEPRIME Academy</h3>
                     <p>Cursos gratuitos, webinars y certificaciones para maximizar el uso de nuestras herramientas y tecnologías.</p>
                     <div class="community-stats">
                         <span><i class="fas fa-play-circle"></i> 50+ cursos</span>
@@ -790,8 +790,8 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <div class="footer-logo">
-                        <img src="../assets/img/logo.png" alt="INNOVATECH">
-                        <span>INNOVATECH</span>
+                        <img src="../assets/img/logo.png" alt="CODEPRIME">
+                        <span>CODEPRIME</span>
                     </div>
                     <p>Innovando el futuro a través de la tecnología.</p>
                     <div class="social-links">
@@ -834,7 +834,7 @@
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 INNOVATECH. Todos los derechos reservados.</p>
+                <p>&copy; 2025 CODEPRIME. Todos los derechos reservados.</p>
                 <div class="footer-links">
                     <a href="#">Política de Privacidad</a>
                     <a href="#">Términos de Uso</a>
@@ -1851,8 +1851,8 @@
                     
                     // Show success message
                     const ticketNumber = 'TS-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-                    if (typeof window.InnovaTechApp !== 'undefined') {
-                        window.InnovaTechApp.showNotification(
+                    if (typeof window.CODEPRIMEApp !== 'undefined') {
+                        window.CODEPRIMEApp.showNotification(
                             `Ticket ${ticketNumber} creado exitosamente. Recibirás un email de confirmación.`, 
                             'success'
                         );
@@ -1920,8 +1920,8 @@
                     console.log('Searching for:', query);
                     
                     // In a real implementation, this would search through docs/FAQ
-                    if (typeof window.InnovaTechApp !== 'undefined') {
-                        window.InnovaTechApp.showNotification(
+                    if (typeof window.CODEPRIMEApp !== 'undefined') {
+                        window.CODEPRIMEApp.showNotification(
                             `Búsqueda realizada: "${query}". Se encontraron resultados en FAQ y documentación.`, 
                             'info'
                         );
@@ -1949,8 +1949,8 @@
             if (chatSupportBtn) {
                 chatSupportBtn.addEventListener('click', function() {
                     // Simulate opening chat
-                    if (typeof window.InnovaTechApp !== 'undefined') {
-                        window.InnovaTechApp.showNotification(
+                    if (typeof window.CODEPRIMEApp !== 'undefined') {
+                        window.CODEPRIMEApp.showNotification(
                             'Conectando con un agente de soporte...', 
                             'info'
                         );
@@ -1958,8 +1958,8 @@
                     
                     // In a real implementation, this would open a chat widget
                     setTimeout(() => {
-                        if (typeof window.InnovaTechApp !== 'undefined') {
-                            window.InnovaTechApp.showNotification(
+                        if (typeof window.CODEPRIMEApp !== 'undefined') {
+                            window.CODEPRIMEApp.showNotification(
                                 'Chat no disponible en este momento. Por favor, crea un ticket.', 
                                 'warning'
                             );

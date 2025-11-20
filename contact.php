@@ -54,12 +54,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // ===== CONFIGURACIÓN =====
 $config = [
     'recipient_emails' => [
-        'cayoeben64@gmail.com',
-        'nielsroy8@gmail.com'
+        'abelito.alvarez41@gmail.com'
     ],
     'company' => [
-        'name' => 'INNOVATECH',
-        'email' => 'contacto@innovatech.com',
+        'name' => 'CODEPRIME',
+        'email' => 'contacto@CODEPRIME.com',
         'phone' => '+591 7000-0000',
         'address' => 'Cotoca, Santa Cruz, Bolivia'
     ]
@@ -161,7 +160,7 @@ try {
     // Preparar headers
     $headers = "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-    $headers .= "From: INNOVATECH Website <contacto@" . ($_SERVER['HTTP_HOST'] ?? 'localhost') . ">\r\n";
+    $headers .= "From: CODEPRIME Website <contacto@" . ($_SERVER['HTTP_HOST'] ?? 'localhost') . ">\r\n";
     $headers .= "Reply-To: $email\r\n";
     $headers .= "X-Mailer: PHP/" . phpversion();
     
@@ -170,7 +169,7 @@ try {
     <html>
     <head><meta charset='UTF-8'></head>
     <body style='font-family: Arial, sans-serif; line-height: 1.6;'>
-        <h2 style='color: #1a237e;'>🚀 Nuevo Contacto - INNOVATECH</h2>
+        <h2 style='color: #1a237e;'>🚀 Nuevo Contacto - CODEPRIME</h2>
         
         <div style='background: #f9f9f9; padding: 20px; border-radius: 8px;'>
             <p><strong>👤 Nombre:</strong> $nombre</p>
@@ -199,7 +198,7 @@ try {
     $totalEmails = count($config['recipient_emails']);
     
     foreach ($config['recipient_emails'] as $recipient) {
-        $subject = "🚀 INNOVATECH - Nuevo contacto: $servicioNombre - $nombre";
+        $subject = "🚀 CODEPRIME - Nuevo contacto: $servicioNombre - $nombre";
         
         if (sendSimpleEmail($recipient, $subject, $htmlMessage, $headers)) {
             $emailsSent++;
@@ -207,12 +206,12 @@ try {
     }
     
     // Email de confirmación al cliente
-    $clientSubject = "✅ Confirmación de contacto - INNOVATECH";
+    $clientSubject = "✅ Confirmación de contacto - CODEPRIME";
     $clientMessage = "
     <html>
     <head><meta charset='UTF-8'></head>
     <body style='font-family: Arial, sans-serif; line-height: 1.6;'>
-        <h2 style='color: #1a237e;'>🚀 INNOVATECH</h2>
+        <h2 style='color: #1a237e;'>🚀 CODEPRIME</h2>
         <p>Hola <strong>$nombre</strong>,</p>
         
         <div style='background: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0;'>
@@ -228,7 +227,7 @@ try {
         </div>
         
         <p><strong>⏱️ Tiempo de respuesta:</strong> 24-48 horas hábiles</p>
-        <p>¡Gracias por confiar en INNOVATECH!</p>
+        <p>¡Gracias por confiar en CODEPRIME!</p>
     </body>
     </html>";
     

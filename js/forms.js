@@ -6,13 +6,12 @@ const FormsModule = (function() {
     // ===== CONFIGURACIÓN =====
     const CONFIG = {
         // Formspree endpoint - CAMBIAR POR TU ID ÚNICO
-        endpoint: 'https://formspree.io/f/xzzgkjzg', // 👈 CAMBIAR ESTO
+        endpoint: 'https://formspree.io/f/meonlbqz', // 👈 CAMBIAR ESTO
         timeout: 15000,
         retries: 2,
         whatsapp: {
             numbers: [
-                '+59163332108',
-                '+59172474541'
+                '+59171336455'
             ]
         }
     };
@@ -234,14 +233,14 @@ const FormsModule = (function() {
 📧 Te contactaremos pronto por email
 ⏱️ Tiempo de respuesta: 24-48 horas
 
-¡Gracias por confiar en INNOVATECH!`;
+¡Gracias por confiar en CODEPRIME!`;
         
         UtilsModule.showNotification(message, 'success', 8000);
         
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
-        if (window.InnovaTechApp && window.InnovaTechApp.trackEvent) {
-            window.InnovaTechApp.trackEvent('form_submit', 'contact', 'success');
+        if (window.CODEPRIMEApp && window.CODEPRIMEApp.trackEvent) {
+            window.CODEPRIMEApp.trackEvent('form_submit', 'contact', 'success');
         }
         
         // Mostrar opciones de contacto adicionales
@@ -263,8 +262,8 @@ const FormsModule = (function() {
         
         UtilsModule.showNotification(message, 'error', 6000);
         
-        if (window.InnovaTechApp && window.InnovaTechApp.trackEvent) {
-            window.InnovaTechApp.trackEvent('form_error', 'contact', response.error_code || 'unknown');
+        if (window.CODEPRIMEApp && window.CODEPRIMEApp.trackEvent) {
+            window.CODEPRIMEApp.trackEvent('form_error', 'contact', response.error_code || 'unknown');
         }
         
         setTimeout(() => {
@@ -280,7 +279,7 @@ También puedes contactarnos por WhatsApp:
 
 📱 WhatsApp 1: ${CONFIG.whatsapp.numbers[0]}
 📱 WhatsApp 2: ${CONFIG.whatsapp.numbers[1]}
-📧 Email: cayoeben64@gmail.com, nielsroy8@gmail.com
+📧 Email: abelito.alvarez41@gmail.com
 
 ¡Estamos aquí para ayudarte!`;
         
@@ -294,7 +293,7 @@ También puedes contactarnos por WhatsApp:
         const message = `Si tienes problemas con el formulario, contáctanos directamente:
 
 📱 WhatsApp: ${CONFIG.whatsapp.numbers.join(', ')}
-📧 Email: cayoeben64@gmail.com, nielsroy8@gmail.com
+📧 Email: abelito.alvarez41@gmail.com
 📍 Ubicación: Cotoca, Santa Cruz, Bolivia
 
 ¡Estaremos encantados de ayudarte!`;
@@ -321,7 +320,7 @@ También puedes contactarnos por WhatsApp:
                     
                     <div class="whatsapp-buttons">
                         ${CONFIG.whatsapp.numbers.map((number, index) => `
-                            <a href="https://wa.me/${number.replace(/[^0-9]/g, '')}?text=Hola%20INNOVATECH,%20me%20interesa%20información%20sobre%20sus%20servicios" 
+                            <a href="https://wa.me/${number.replace(/[^0-9]/g, '')}?text=Hola%20CODEPRIME,%20me%20interesa%20información%20sobre%20sus%20servicios" 
                                target="_blank" 
                                class="whatsapp-btn">
                                 <span class="whatsapp-icon">📱</span>
@@ -335,7 +334,7 @@ También puedes contactarnos por WhatsApp:
                     
                     <div class="contact-info">
                         <h4>📧 Otros medios de contacto:</h4>
-                        <p><strong>Email:</strong> cayoeben64@gmail.com, nielsroy8@gmail.com</p>
+                        <p><strong>Email:</strong> abelito.alvarez41@gmail.com</p>
                         <p><strong>Ubicación:</strong> Cotoca, Santa Cruz, Bolivia</p>
                         <p><strong>Horario:</strong> Lunes a Viernes, 8:00 AM - 6:00 PM</p>
                     </div>

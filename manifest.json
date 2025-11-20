@@ -1,6 +1,6 @@
 {
-  "name": "INNOVATECH - Desarrollo de Software",
-  "short_name": "InnovaTech",
+  "name": "CODEPRIME - Desarrollo de Software",
+  "short_name": "CODEPRIME",
   "description": "Empresa líder en desarrollo de software, aplicaciones móviles y soluciones tecnológicas innovadoras",
   "start_url": "/",
   "display": "standalone",
@@ -118,7 +118,7 @@
   "related_applications": [
     {
       "platform": "webapp",
-      "url": "https://InnovaTech-solutions.com"
+      "url": "https://CODEPRIME-solutions.com"
     }
   ],
   "prefer_related_applications": false,
