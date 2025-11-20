@@ -105,8 +105,8 @@ const NavigationModule = (function() {
                 }
                 
                 // Analytics
-                if (window.InnovaTechApp && window.InnovaTechApp.trackEvent) {
-                    window.InnovaTechApp.trackEvent('navigation_click', 'internal_link', targetId);
+                if (window.CODEPRIMEApp && window.CODEPRIMEApp.trackEvent) {
+                    window.CODEPRIMEApp.trackEvent('navigation_click', 'internal_link', targetId);
                 }
             }
         } else {
@@ -293,7 +293,7 @@ const NavigationModule = (function() {
         
         const title = sectionTitles[currentSection] || 'Inicio';
         breadcrumbContainer.innerHTML = `
-            <span>INNOVATECH</span>
+            <span>CODEPRIME</span>
             <span class="separator">/</span>
             <span class="current">${title}</span>
         `;

@@ -1,5 +1,5 @@
 // ===== SERVICE WORKER CONFIGURATION =====
-const CACHE_NAME = 'InnovaTech-solutions-v1.0.0';
+const CACHE_NAME = 'CODEPRIME-solutions-v1.0.0';
 const OFFLINE_URL = '/offline.html';
 
 // Archivos críticos que siempre deben estar en caché
@@ -265,7 +265,7 @@ self.addEventListener('push', event => {
     console.log('Push notification received');
     
     const options = {
-        body: event.data ? event.data.text() : 'Nueva notificación de INNOVATECH',
+        body: event.data ? event.data.text() : 'Nueva notificación de CODEPRIME',
         icon: '/assets/img/icons/icon-192x192.png',
         badge: '/assets/img/icons/badge-72x72.png',
         vibrate: [200, 100, 200],
@@ -286,11 +286,11 @@ self.addEventListener('push', event => {
             }
         ],
         requireInteraction: true,
-        tag: 'InnovaTech-notification'
+        tag: 'CODEPRIME-notification'
     };
     
     event.waitUntil(
-        self.registration.showNotification('INNOVATECH', options)
+        self.registration.showNotification('CODEPRIME', options)
     );
 });
 
@@ -342,7 +342,7 @@ async function cacheUrls(urls) {
 // ===== INDEXEDDB HELPERS =====
 async function getPendingForms() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open('InnovaTechDB', 1);
+        const request = indexedDB.open('CODEPRIMEDB', 1);
         
         request.onerror = () => reject(request.error);
         request.onsuccess = () => {
@@ -366,7 +366,7 @@ async function getPendingForms() {
 
 async function storePendingForm(formData) {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open('InnovaTechDB', 1);
+        const request = indexedDB.open('CODEPRIMEDB', 1);
         
         request.onerror = () => reject(request.error);
         request.onsuccess = () => {
@@ -389,7 +389,7 @@ async function storePendingForm(formData) {
 
 async function removePendingForm(formId) {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open('InnovaTechDB', 1);
+        const request = indexedDB.open('CODEPRIMEDB', 1);
         
         request.onerror = () => reject(request.error);
         request.onsuccess = () => {
@@ -407,7 +407,7 @@ async function removePendingForm(formId) {
 // ===== PERFORMANCE MONITORING =====
 self.addEventListener('fetch', event => {
     // Monitor performance of critical resources
-    if (event.request.url.includes('InnovaTech-solutions.com')) {
+    if (event.request.url.includes('CODEPRIME-solutions.com')) {
         const startTime = performance.now();
         
         event.respondWith(
@@ -432,4 +432,4 @@ self.addEventListener('beforeunload', () => {
     console.log('Service Worker unloading...');
 });
 
-console.log('INNOVATECH Service Worker loaded successfully');
+console.log('CODEPRIME Service Worker loaded successfully');

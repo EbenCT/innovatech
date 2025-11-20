@@ -1,6 +1,6 @@
-# INNOVATECH - Sitio Web Empresarial
+# CODEPRIME - Sitio Web Empresarial
 
-Sitio web corporativo para INNOVATECH, empresa líder en desarrollo de software y soluciones tecnológicas innovadoras.
+Sitio web corporativo para CODEPRIME, empresa líder en desarrollo de software y soluciones tecnológicas innovadoras.
 
 ## 🚀 Características
 
@@ -14,7 +14,7 @@ Sitio web corporativo para INNOVATECH, empresa líder en desarrollo de software 
 ## 📁 Estructura del Proyecto
 
 ```
-InnovaTech-solutions/
+CODEPRIME-solutions/
 ├── index.html              # Página principal
 ├── manifest.json          # Configuración PWA
 ├── sw.js                  # Service Worker
@@ -78,7 +78,7 @@ InnovaTech-solutions/
 ### 1. Clonar/Descargar el Proyecto
 ```bash
 git clone [URL-del-repositorio]
-cd InnovaTech-solutions
+cd CODEPRIME-solutions
 ```
 
 ### 2. Estructura de Archivos
@@ -236,7 +236,7 @@ function trackEvent(action, category, label) {
 ## 📞 Soporte
 
 ### Contacto Técnico
-- Email: desarrollo@InnovaTech.com
+- Email: desarrollo@CODEPRIME.com
 - Documentación: Ver carpeta `/docs`
 - Issues: Reportar en repositorio Git
 
@@ -247,8 +247,8 @@ function trackEvent(action, category, label) {
 
 ## 📄 Licencia
 
-Copyright © 2025 INNOVATECH. Todos los derechos reservados.
+Copyright © 2025 CODEPRIME. Todos los derechos reservados.
 
 ---
 
-**Desarrollado con ❤️ por INNOVATECH**
+**Desarrollado con ❤️ por CODEPRIME**

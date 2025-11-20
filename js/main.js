@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeApp() {
-    console.log('🚀 INNOVATECH - Inicializando aplicación...');
+    console.log('🚀 CODEPRIME - Inicializando aplicación...');
     
     // Inicializar módulos
     if (typeof NavigationModule !== 'undefined') {
@@ -40,7 +40,7 @@ function initializeApp() {
         document.body.style.opacity = '1';
     }, 100);
     
-    console.log('✅ INNOVATECH - Aplicación inicializada correctamente');
+    console.log('✅ CODEPRIME - Aplicación inicializada correctamente');
 }
 
 // ===== EFECTOS DE SCROLL =====
@@ -165,7 +165,7 @@ function trackEvent(action, category, label) {
 }
 
 // ===== EXPORT GLOBAL =====
-window.InnovaTechApp = {
+window.CODEPRIMEApp = {
     trackEvent,
     version: '2.0.0',
     modules: {

@@ -2,7 +2,7 @@
 
 // ===== CONFIGURACIÓN GEMINI AI =====
 const GEMINI_CONFIG = {
-    apiKey: 'AIzaSyDtVbJLqjH_HiNXnW3v_l7YbtFoC7exxts',
+    apiKey: 'AIzaSyBGlm-5AWPOqQC8cNNLlJTMbvmsGNn5-T4',
     apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
     maxTokens: 1000,
     temperature: 0.7
@@ -10,13 +10,13 @@ const GEMINI_CONFIG = {
 
 // ===== CONTEXTO DE LA EMPRESA =====
 const COMPANY_CONTEXT = `
-Eres Sofia, asistente virtual de INNOVATECH, una empresa de desarrollo de software ubicada en Cotoca, Santa Cruz, Bolivia.
+Eres Sofia, asistente virtual de CODEPRIME, una empresa de desarrollo de software ubicada en Cotoca, Santa Cruz, Bolivia.
 
 INFORMACIÓN DE LA EMPRESA:
-- Nombre: INNOVATECH
+- Nombre: CODEPRIME
 - Fundada: 2020
 - Ubicación: Av. Principal 123, Cotoca, Santa Cruz, Bolivia
-- Email: contacto@InnovaTech.com
+- Email: contacto@CODEPRIME.com
 - Teléfono: +591 7000-0000
 
 SERVICIOS:
@@ -299,10 +299,10 @@ class GeminiChatbot {
         
         // Respuestas básicas predefinidas
         const responses = {
-            'hola': '¡Hola! 👋 Soy Sofia, tu asistente virtual de INNOVATECH. ¿En qué puedo ayudarte?',
+            'hola': '¡Hola! 👋 Soy Sofia, tu asistente virtual de CODEPRIME. ¿En qué puedo ayudarte?',
             'servicios': 'Ofrecemos desarrollo web, apps móviles, sistemas ERP y consultoría tecnológica. ¿Te interesa algún servicio en particular? 💻',
             'precios': 'Los precios varían según el proyecto. ¿Podrías contarme más sobre lo que necesitas? Te preparo un presupuesto gratuito 💰',
-            'contacto': 'Puedes contactarnos:\n📧 contacto@InnovaTech.com\n📱 +591 7000-0000\n📍 Cotoca, Santa Cruz, Bolivia',
+            'contacto': 'Puedes contactarnos:\n📧 contacto@CODEPRIME.com\n📱 +591 7000-0000\n📍 Cotoca, Santa Cruz, Bolivia',
             'tiempo': 'Los tiempos dependen del proyecto:\n🌐 Web: 2-4 semanas\n📱 App móvil: 6-12 semanas\n🏢 ERP: 3-8 meses',
             'tecnologias': 'Trabajamos con React, Vue.js, React Native, Node.js, Python y más. ¿Tienes alguna preferencia tecnológica? ⚡',
             'ubicacion': 'Estamos ubicados en Av. Principal 123, Cotoca, Santa Cruz, Bolivia 🇧🇴',
@@ -416,7 +416,7 @@ class GeminiChatbot {
     addWelcomeMessage() {
         setTimeout(() => {
             const welcomeMessages = [
-                "¡Hola! 👋 Soy Sofia, tu asistente virtual de INNOVATECH.",
+                "¡Hola! 👋 Soy Sofia, tu asistente virtual de CODEPRIME.",
                 "Estoy aquí para ayudarte con información sobre nuestros servicios de desarrollo de software. ¿En qué puedo asistirte? 😊"
             ];
             
